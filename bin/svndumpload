@@ -6,7 +6,7 @@ use strict ;
 # if the following programm are not in your path, you might
 # change the definitions
 
-our $ssh      = 'ssh' ;
+our $ssh      = 'ssh -C ' ;
 our $svnadmin = '/usr/local/bin/svnadmin' ;
 our $svnlook  = '/usr/local/bin/svnlook' ;
 our $test     = 'test' ;
@@ -43,7 +43,7 @@ sub execcmd
 	
 	my $fullcmd = $host?"$ssh $host \"$cmd\"":$cmd ;
 	
-	print "h=$host c=$cmd f=$fullcmd\n" ;
+	#print "h=$host c=$cmd f=$fullcmd\n" ;
 	open FH, "$fullcmd|" or die "Cannot run $fullcmd ($!)" ;
 	my @out = <FH> ;
 	close FH ;
@@ -60,7 +60,7 @@ sub execcmdpipe
 	my $fullcmda = $hosta?"$ssh $hosta \"$cmda\"":$cmda ;
 	my $fullcmdb = $hostb?"$ssh $hostb \"$cmdb\"":$cmdb ;
 	
-    print "start $fullcmda | $fullcmdb\n" ; 
+        #print "start $fullcmda | $fullcmdb\n" ; 
 	system ("$fullcmda | $fullcmdb") ;
 	}
 

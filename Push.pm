@@ -127,15 +127,18 @@ sub get_wc_prop {
     return undef;
 }
 
+# ------------------------------------------------------------------------
+
 package SVN::Push ;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 use SVN::Core;
 use SVN::Repos;
 use SVN::Fs;
 use SVN::Delta;
 use SVN::Ra;
 use SVN::Client ();
+use Data::Dumper ;
 use strict;
 
 =head1 NAME
@@ -315,10 +318,20 @@ sub do_init
     $self->{source_path}    = substr ($self -> {source}, length ($self->{source_root})) || '/' ;
     $self->{source_uuid}    = $self -> {source_ra}->get_uuid ();
 
+    if ($self->{source_path} ne '/')
+	{
+        my $result = $self->{source_ra} -> get_file ('', -1, undef) ;
+        $self->{source_lastrev} = $result ->[1]{'svn:entry:committed-rev'} ; 
+	}
+    else
+        {
+        $self->{source_lastrev} = $self->{source_headrev} ; 
+        }
+
     print "Source: $self->{source}\n" ;
     print "  Revision: $self->{source_headrev}\n" ; 
     print "  Root:     $self->{source_root}\n" ;
-    print "  Path:     $self->{source_path}\n" ; 
+    print "  Path:     $self->{source_path} (rev: $self->{source_lastrev})\n" ; 
 
     $self->{target_ra} = SVN::Ra->new(url => $self->{target},
 			  auth   => $self->{auth},
@@ -503,7 +516,7 @@ sub run {
     $self->{endrev} = $endrev ;
     
     my $startrev = $self->{startrev} || 0 ;
-    $startrev = $self -> {source_headrev} if ($self->{fromrev} && $self->{fromrev} eq 'HEAD') ;
+    $startrev = $self -> {source_lastrev} if ($self->{startrev} && $self->{startrev} eq 'HEAD') ;
     $startrev = $self -> {target_source_rev} + 1 if ($self -> {target_source_rev} + 1 > $startrev) ;
     $self->{startrev} = $startrev ;
     

@@ -59,6 +59,17 @@ the repository.
 
 =back
 
+Example:
+
+  svnpush push --create -r HEAD -m 'New Release' https://svn.example.com/repos https://svn2.example.com/release
+
+This will push the HEAD revision of the first URL to the second URL. The
+direcory of the second URL will be created if it isn't there. If, since the
+last push, multiple revision had been commited to the source, they will be
+commited as one revision to the destination. If you leave out the -r option
+every revision in the source will be commited as one revision to the
+destination.
+
 =item walk [options] B<srcurl> B<desturl> B<regex> B<repos1> .. B<reposN> 
 
 Invoke the push of for all reositories underneath B<srcurl> to B<desturl> 
